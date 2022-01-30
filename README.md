@@ -1,14 +1,15 @@
-# BOX db
+
+# BOXDB
 
 This a database managment lib made for python, which works like any Libraries and is very lite
 no aditional setup require but there is some procedure to create a project is very easy.
 
 ## Installation
 
-1. use `pip install boxdb`
-2. Make sure that your `pip` version is updated `pip install --upgrade pip`. 
-3. Select the correct package for your environment:
-4. Import the package: ``import boxdb``
+- use `pip install boxdb`
+- Make sure that your `pip` version is updated `pip install --upgrade pip`. 
+- Select the correct package for your environment:
+- Import the package: ``import boxdb``
 
 ### Clone the project
 
@@ -34,6 +35,9 @@ Install
 - custom encryption are very easy to apply
 - faster in performace
 
+## things to keep in mind 
+
+- you can only acess the database file when your python file and database file are in same directory
 
 # How to use it :)
 
@@ -120,6 +124,7 @@ boxdb.remove_row("plasma", "update")
 | create_row | This function helps you create rows in you table|table_name,row(accepts list or string)|
 | remove_row| Helps you delete rows if you dont want |table_name,row(accepts list or string)|
 
+
 ### Lets learn about creating columns
 
 
@@ -162,6 +167,8 @@ boxdb.remove_column_number"plasma", 1)
 | add_column | This function helps you create columns in you table|table_name,column_data(list)|
 | remove_column_number| Helps you delete column if you dont want |table_name,remove_column_number|
 
+
+
 ### Showing table
 
 
@@ -186,3 +193,13 @@ boxdb.get_table("plasma")
 | get_table| This function helps to visualize the table|table_name|
 
 
+## License
+
+[MIT](https://github.com/kshitij1235/boxdb/blob/main/LICENSE)
+
+
+
+## Feedback
+If you have any feedback, please reach out to us at email kshitijjathar7@.com 
+
+  
