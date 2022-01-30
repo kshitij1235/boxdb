@@ -115,4 +115,11 @@ boxdb.remove_row("plasma", "update")
 
 ```
 
+| functions         | description        | arguments |
+| ----------------- | -------------------|-----------|
+| create_row | This function helps you create rows in you table|table_name,row(accepts list or string)|
+| remove_row| Helps you delete rows if you dont want |table_name,row(accepts list or string)|
+
+
+
 
