@@ -1,8 +1,5 @@
 # BOX db
 
-
-<img src="https://user-images.githubusercontent.com/65331304/151694894-c4720d7b-0535-4398-8bad-1b6b968fe672.png" width="280" height="280">
-
 This a database managment lib made for python, which works like any Libraries and is very lite
 no aditional setup require but there is some procedure to create a project is very easy.
 
@@ -78,4 +75,44 @@ print(details)
 | ----------------- | -------------------|-----------|
 | create_project | This function creates basic file system to store data|info(patten given above for variable naming)|
 | get_detail| This gives you all the basic details of the table |table_name|
+
+
+## phase 2 (wow you learned to set up boxdb)
+
+ ### Now  lets start with row creation and deletion
+
+
+
+```python
+
+from boxdb import*
+
+# At start lets create some row !!!!
+
+# you can pass string or even list to create rows its according to your wish
+# ill show creating 4 rows 3 with rows and 1 with string
+row=["sr no","names of cow","lites fo milk"]
+
+# this fucntion takes table name (in my case its  "plasma") and rows you can pass list if you have many rows 
+# or you can use string if you wanna create one single row 
+
+
+# this is multiple 
+boxdb.create_row("plasma", rows)
+
+# this is single row 
+boxdb.create_row("plasma", "update")
+
+#you can always delete a row if you want
+
+
+# this fucntion takes table name (in my case its  "plasma") and rows you can pass list if you have many rows to delete
+# or you can pass a sting if you wanna delete a single row
+
+# in this case am deleting a single row but you can always pass a list to
+boxdb.remove_row("plasma", "update")
+
+
+```
+
 
