@@ -200,6 +200,6 @@ boxdb.get_table("plasma")
 
 
 ## Feedback
-If you have any feedback, please reach out to us at email kshitijjathar7@.com 
+If you have any feedback, please reach out to us at email kshitijjathar7@gmail.com 
 
   
