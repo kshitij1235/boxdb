@@ -162,5 +162,27 @@ boxdb.remove_column_number"plasma", 1)
 | add_column | This function helps you create columns in you table|table_name,column_data(list)|
 | remove_column_number| Helps you delete column if you dont want |table_name,remove_column_number|
 
+### Showing table
+
+
+```python
+
+from boxdb import*
+
+# Displaying table is a kids job , its very easy 
+
+# this function helps you to show table 
+# this function takes a single argument which is table name(in my case its "plasma")
+
+##i understand few freatures should be added to improve the use of show table functions
+# and yes it would be release soon 
+
+boxdb.get_table("plasma")
+
+```
+
+| functions         | description        | arguments |
+| ----------------- | -------------------|-----------|
+| get_table| This function helps to visualize the table|table_name|
 
 
