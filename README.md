@@ -120,6 +120,47 @@ boxdb.remove_row("plasma", "update")
 | create_row | This function helps you create rows in you table|table_name,row(accepts list or string)|
 | remove_row| Helps you delete rows if you dont want |table_name,row(accepts list or string)|
 
+### Lets learn about creating columns
+
+
+```python
+
+from boxdb import*
+
+# At start lets create some columns!!!!
+
+# you have to pass list to columns according to the rows 
+
+# for example if you have three rows ,you have to pass 3 elements each elements gets added to 
+# each row 
+
+# In short you can add 1 column at a time but a fix for that will be realease soon too 
+
+columns=["1","amanda","28"]
+
+# this fucntion takes table name (in my case its  "plasma") and column you have to  pass list 
+# thta you created earlier according to row size 
+
+# this is multiple 
+boxdb.add_column("plasma", columns)
+
+
+#you can always delete a column if you want
+
+
+# this fucntion takes table name (in my case its  "plasma") 
+# and the number of column 
+
+# in this case am delelting a single columns whic h is column number 1
+boxdb.remove_column_number"plasma", 1)
+
+
+```
+
+| functions         | description        | arguments |
+| ----------------- | -------------------|-----------|
+| add_column | This function helps you create columns in you table|table_name,column_data(list)|
+| remove_column_number| Helps you delete column if you dont want |table_name,remove_column_number|
 
 
 
