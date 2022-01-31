@@ -1,5 +1,5 @@
 
-# BOXBD
+# BOXDB
 
 This a database managment lib made for python, which works like any Libraries and is very lite
 no aditional setup require but there is some procedure to create a project is very easy.
