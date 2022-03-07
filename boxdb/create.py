@@ -3,7 +3,9 @@ from os import mkdir, chdir
 
 
 def get_detail(table_name):
-    """show meta data to user"""
+    """
+    saves meta data of the users
+    """
     return reader(f"./{table_name}/{table_name}_meta.txt")
 
 
@@ -11,7 +13,7 @@ def create_project(info):
     """created necessary files in the dir"""
     try:
         mkdir(info['name'])
-    except:
+    except Exception:
         pass
     writing = ""
     keys_ = list(info.keys())

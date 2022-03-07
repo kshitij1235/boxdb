@@ -1,5 +1,5 @@
 
-# BOXBD
+# BOXDB
 
 This a database managment lib made for python, which works like any Libraries and is very lite
 no aditional setup require but there is some procedure to create a project is very easy.
@@ -23,6 +23,15 @@ Install
   pip install boxdb
 ```
 
+# UPDATE
+
+- get_table() now we can select rows to show
+- add_column() is been tweed so it fills empty spaces by null
+- create_rows() is been updated soliving spacing problem in data file
+- read performace is been improved with new lib update of filemod
+
+----
+
 ## Libraries Used
 
 - Tabulate
@@ -35,7 +44,8 @@ Install
 - custom encryption are very easy to apply
 - faster in performace
 
-## things to keep in mind 
+
+## Things to keep in mind 
 
 - you can only acess the database file when your python file and database file are in same directory
 
@@ -43,7 +53,7 @@ Install
 
 
 
-## phase 1 
+## phase 1 (Creating a TABLE)
 
 
 1) In order to start with boxdb you first need to have a file for table reaction with a 
@@ -131,7 +141,7 @@ boxdb.remove_row("plasma", "update")
 ```python
 
 from boxdb import*
-
+'''
 # At start lets create some columns!!!!
 
 # you have to pass list to columns according to the rows 
@@ -139,12 +149,15 @@ from boxdb import*
 # for example if you have three rows ,you have to pass 3 elements each elements gets added to 
 # each row 
 
-# In short you can add 1 column at a time but a fix for that will be realease soon too 
+# In short you can add 1 column at a time but a fix for that will be realease soon too '
 
+'''
 columns=["1","amanda","28"]
 
-# this fucntion takes table name (in my case its  "plasma") and column you have to  pass list 
-# thta you created earlier according to row size 
+'''
+# this function takes table name (in my case its  "plasma") and column you have to  pass list 
+# that you created earlier according to row size 
+'''
 
 # this is multiple 
 boxdb.add_column("plasma", columns)
@@ -185,6 +198,13 @@ from boxdb import*
 # and yes it would be release soon 
 
 boxdb.get_table("plasma")
+
+'''
+now there is another method to do it with selective rows
+''' 
+
+list_of_rows=["sr_no","number_of_cows"]
+doxbd.get_table("plasma",[list_of_rows])
 
 ```
 
