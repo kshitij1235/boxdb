@@ -29,6 +29,7 @@ Install
 - add_column() is been tweed so it fills empty spaces by null
 - create_rows() is been updated soliving spacing problem in data file
 - read performace is been improved with new lib update of filemod
+- create_row() bug solved it wont allow you to make rows
 
 ----
 
