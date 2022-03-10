@@ -49,8 +49,11 @@ def create_row(table_name, rows):
             print(f"Row {elements} already exists")
             continue
         # fill all the empty void with putting null in the file
-        writer(f"./{table_name}/tables/{elements}.txt",
+        try:
+            writer(f"./{table_name}/tables/{elements}.txt",
                "null \n"*max(row_lenght), "w")
+        except Exception:
+            pass
         # update the data file
         write_specific_line(f"./{table_name}/{table_name}_data.txt", len(content)+1,
                             f"{elements} \n")
