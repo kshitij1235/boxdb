@@ -37,8 +37,6 @@ Install
 - get_content() speed optimization
 - get_element() function added
 
-----
-
 ## Libraries Used
 
 - Tabulate
