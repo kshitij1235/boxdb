@@ -1,0 +1,9 @@
+plasma/
+tempCodeRunnerFile.py
+boxdb/__pycache__/
+boxdb/tempCodeRunnerFile.py
+test.py
+dist/
+wheel_creation.bat
+setup.py
+dist/
