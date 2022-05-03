@@ -24,3 +24,4 @@
 
 from boxdb.create import *
 from boxdb.basic_commands import *
+from boxdb.auth_boxdb import *

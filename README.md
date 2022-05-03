@@ -24,11 +24,18 @@ Install
 ```
 
 # UPDATE
-
-- get_table() now we can select rows to show
-- add_column() is been tweed so it fills empty spaces by null
-- create_rows() is been updated soliving spacing problem in data file
-- read performace is been improved with new lib update of filemod
+- PRIMARY KEY AND AUTHENTICATE SYSTEM 
+- solved bug in auth system
+- solved bugs in create_project()
+- auth_details() improved speed
+- get_table() doesnt crash if there is not table made
+- get_table() added tags for primary key
+- create_columns() works better now
+- update_rows() added to update row values
+- remove_rows() added which work flawless with primary_key refrence    
+- remove_columns() made improvements to it 
+- get_content() speed optimization
+- get_element() function added
 
 ----
 
@@ -43,6 +50,7 @@ Install
 - Very lite and easy to maintain
 - custom encryption are very easy to apply
 - faster in performace
+
 
 
 ## Things to keep in mind 
@@ -75,10 +83,10 @@ info={
 }
 
 # with the help of this function your table will be created 
-boxdb.create_project(info)
+create_project(info)
 
 #with the help of this function you can check the details of your table which  you stored
-details=boxdb.get_detail("plasma")
+details=get_detail("plasma")
 print(details)
 
 ```
@@ -93,7 +101,7 @@ print(details)
 
 ## phase 2 (wow you learned to set up boxdb)
 
- ### Now  lets start with row creation and deletion
+ ### Now  lets start with column creation and deletion with PRIMARY KEY
 
 
 
@@ -103,82 +111,102 @@ from boxdb import*
 
 # At start lets create some row !!!!
 
-# you can pass string or even list to create rows its according to your wish
+# you can pass string or even list to create columns its according to your wish
 # ill show creating 4 rows 3 with rows and 1 with string
-row=["sr no","names of cow","lites fo milk"]
+columns=["sr no","names of cow","lites fo milk"]
 
-# this fucntion takes table name (in my case its  "plasma") and rows you can pass list if you have many rows 
+# this fucntion takes table name (in my case its  "plasma") and columns you can pass list if you have many rows 
 # or you can use string if you wanna create one single row 
 
 
 # this is multiple 
-boxdb.create_row("plasma", rows)
+create_column("plasma", rows)
 
-# this is single row 
-boxdb.create_row("plasma", "update")
+# this is single row  
+create_column("plasma", "update")
 
-#you can always delete a row if you want
+# you can make primary key this way 
+create_column("plasma", "id",primary_key=True)
+
+#you can always delete a column if you want
 
 
-# this fucntion takes table name (in my case its  "plasma") and rows you can pass list if you have many rows to delete
+# this fucntion takes table name (in my case its  "plasma") and columns you can pass list if you have many rows to delete
 # or you can pass a sting if you wanna delete a single row
 
-# in this case am deleting a single row but you can always pass a list to
-boxdb.remove_row("plasma", "update")
+# in this case am deleting a single column but you can always pass a list to
+remove_column("plasma", "update")
 
 
 ```
 
 | functions         | description        | arguments |
 | ----------------- | -------------------|-----------|
-| create_row | This function helps you create rows in you table|table_name,row(accepts list or string)|
-| remove_row| Helps you delete rows if you dont want |table_name,row(accepts list or string)|
+|create_column| This function helps you create columns in you table|table_name,columns name(accepts list or string)|
+|remove_column| Delete columns  |table_name,column(accepts list or string)|
 
 
-### Lets learn about creating columns
+### Lets learn about creating rows
 
 
 ```python
 
 from boxdb import*
 '''
-# At start lets create some columns!!!!
+# At start lets create some rows!!!!
 
-# you have to pass list to columns according to the rows 
+# you have to pass list to rows according to the columns 
 
-# for example if you have three rows ,you have to pass 3 elements each elements gets added to 
+# for example if you have three columns ,you have to pass 3 elements each elements gets added to 
 # each row 
 
-# In short you can add 1 column at a time but a fix for that will be realease soon too '
+# In short you can add 1 row at a time but a fix for that will be release soon too '
 
 '''
-columns=["1","amanda","28"]
+rows=["1","amanda","28","er"]
 
 '''
-# this function takes table name (in my case its  "plasma") and column you have to  pass list 
+# this function takes table name (in my case its  "plasma") and rows you have to  pass list 
 # that you created earlier according to row size 
 '''
 
 # this is multiple 
-boxdb.add_column("plasma", columns)
+add_row("plasma", rows)
+add_row("plasma",["2","ana","28","3e"])
+add_row("plasma",["3","kyee","28","5e"])
 
 
-#you can always delete a column if you want
+#you can always delete a row if you want
 
+# this functions takes table name (in my case its "plasma")
+# rules 
+# 1)it needs a primary key
+# it takes the column name to change and element to change
 
+remove_row("plasma","id","3e")
 # this fucntion takes table name (in my case its  "plasma") 
-# and the number of column 
+# and the number of row 
 
-# in this case am delelting a single columns whic h is column number 1
-boxdb.remove_column_number"plasma", 1)
+# in this case am delelting a single columns which is row number 1
+remove_column_number("plasma", 1)
+
+#you can always update a row if you want
+
+# it takes table name 
+# and a value from primary key that should exist in same row
+# it takes column number and what to update in  
+
+update_row("plasma","5e","update","22")
 
 
 ```
 
 | functions         | description        | arguments |
 | ----------------- | -------------------|-----------|
-| add_column | This function helps you create columns in you table|table_name,column_data(list)|
-| remove_column_number| Helps you delete column if you dont want |table_name,remove_column_number|
+| add_row | This function helps you create columns in you table|table_name,column_data(list)|
+| remove_column_number| Delete row by index |table_name,remove_row_number|
+| remove_row| Delete row |table_name,column,row_element|
+| update_row|update values in row |table_name,primary_value, column, element|
 
 
 
@@ -197,14 +225,14 @@ from boxdb import*
 ##i understand few freatures should be added to improve the use of show table functions
 # and yes it would be release soon 
 
-boxdb.get_table("plasma")
+get_table("plasma")
 
 '''
 now there is another method to do it with selective rows
 ''' 
 
 list_of_rows=["sr_no","number_of_cows"]
-doxbd.get_table("plasma",[list_of_rows])
+get_table("plasma",[list_of_rows])
 
 ```
 

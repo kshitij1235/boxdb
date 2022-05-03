@@ -1,3 +1,13 @@
+'''
+boxdb/auth_boxbd -> v0.6
+
+This file contain code for
+1)creating projects and getting details about the project 
+
+made chaneges 
+[ ] solved bugs in create_project
+'''
+
 from filemod import reader, writer
 from os import mkdir, chdir
 
@@ -14,8 +24,9 @@ def create_project(info):
     try:
         mkdir(info['name'])
     except Exception:
-        pass
-    writing = ""
+        return False
+
+    writing=''
     keys_ = list(info.keys())
     values_ = list(info.values())
     for key, value in zip(keys_, values_):
@@ -28,3 +39,5 @@ def create_project(info):
     # this stores all the table data
     chdir(f"./{info['name']}")
     mkdir("tables")
+    chdir("../")
+    return True
