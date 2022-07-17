@@ -23,5 +23,16 @@
 '''
 
 from boxdb.create import *
+from boxdb.rows import *
 from boxdb.basic_commands import *
-from boxdb.auth_boxdb import *
+from boxdb.auth import *
+from boxdb.columns import *
+from boxdb.logs import showlogs
+
+
+"""
+ideas -
+
+[ ] forbidden words in a column - done
+[ ] encryption  
+"""

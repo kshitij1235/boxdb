@@ -1,8 +1,7 @@
-
 # BOXDB
 
-This a database managment lib made for python, which works like any Libraries and is very lite
-no aditional setup require but there is some procedure to create a project is very easy.
+This is a database management lib made for python, which works like any Libraries and is very lite
+no additional setup is required but there is some procedure to create a project is very easy.
 
 ## Installation
 
@@ -24,57 +23,82 @@ Install
 ```
 
 # UPDATE
-- PRIMARY KEY AND AUTHENTICATE SYSTEM 
-- solved bug in auth system
-- solved bugs in create_project()
-- auth_details() improved speed
-- get_table() doesnt crash if there is not table made
-- get_table() added tags for primary key
-- create_columns() works better now
-- update_rows() added to update row values
-- remove_rows() added which work flawless with primary_key refrence    
-- remove_columns() made improvements to it 
-- get_content() speed optimization
-- get_element() function added
+
+- FORBIDDEN WORDS ARE ADDED TO THE COLUMN !! , so now you can restrict some words for a column.
+- IT ALSO KEEPS TRACK OF TABLE WITH LOGS
+- auth_details() improved speed and algorithm
+- specific_auth() improved speed and algorithm
+- add_row() made more faster
+- drop_primary_key()->added
+- assign_primary_key()->added
+- get_table()->loads the table lazily now and memory efficient and faster
+- internal check primary row fixed
+- delete_row() -> added it deleted columns permenently
+- remove_row() -> added it does not delete columns permenently
+- create_column() -> added feature to create a uniques column
+- create_column() -> added feature to create a column with forbident words
+-  solved bugs in create_project
+- changes made to the core modules
+
+----
 
 ## Libraries Used
 
 - Tabulate
 - filemod
 
-
 ## Features
 
-- Very lite and easy to maintain
-- custom encryption are very easy to apply
-- faster in performace
+- Very lite and easy to maintain.
+- custom encryption is very easy to apply.
+- faster in performance.
 
+## Things to keep in mind
 
+- you can only access the database file when your python file and database file are in the same directory
 
-## Things to keep in mind 
+---
 
-- you can only acess the database file when your python file and database file are in same directory
+# Structure Of The Table
+
+```bash
+{table_name}
+│ 
+├── flags
+│   ├── forbidden.txt
+│   └── not_null.txt
+│   └── primary_key.txt
+│   └── unique.txt
+├── Forbidden
+│   ├── {forbiden_column}_f.txt
+├── Logs
+│   ├── error.log
+│   ├── info.log
+│   └── warning.log
+├── tables
+│   ├── {columns}.txt
+├── {table_name}_data.txt
+└── {table_name}_meta.txt
+```
+
+---
 
 # How to use it :)
 
-
-
 ## phase 1 (Creating a TABLE)
-
 
 1) In order to start with boxdb you first need to have a file for table reaction with a 
    variable with some  parameters
 
 2) you can use this code to start with it too 
 
-
 ```python
-
 from boxdb import*
 
 #in this variable you make sure too include the the name key aka variable as it will be your table name 
 # and rest you can put any number of keys values you want its upto you 
 
+#The only important key value is name 
 info={
     'name':"plasma",      
     'description':"makeing heard of cows talking to each other and making things more brigth for the world to take stem"
@@ -86,34 +110,27 @@ create_project(info)
 #with the help of this function you can check the details of your table which  you stored
 details=get_detail("plasma")
 print(details)
-
 ```
 
-
-
-| functions         | description        | arguments |
-| ----------------- | -------------------|-----------|
-| create_project | This function creates basic file system to store data|info(patten given above for variable naming)|
-| get_detail| This gives you all the basic details of the table |table_name|
-
+| functions      | description                                                   | arguments                                    |
+| -------------- | ------------------------------------------------------------- | -------------------------------------------- |
+| create_project | This function creates a  basic file system to store data info | info(patten given above for variable naming) |
+| get_detail     | This gives you all the basic details of the table             | table_name                                   |
 
 ## phase 2 (wow you learned to set up boxdb)
 
- ### Now  lets start with column creation and deletion with PRIMARY KEY
-
-
+### Now  lets start with column creation and deletion with PRIMARY KEY
 
 ```python
-
 from boxdb import*
 
-# At start lets create some row !!!!
+# At the start let's create some rows!!!!
 
-# you can pass string or even list to create columns its according to your wish
+# you can pass a string or even list to create columns according to your wish
 # ill show creating 4 rows 3 with rows and 1 with string
 columns=["sr no","names of cow","lites fo milk"]
 
-# this fucntion takes table name (in my case its  "plasma") and columns you can pass list if you have many rows 
+# this function takes table name (in my case its  "plasma") and columns you can pass list if you have many rows 
 # or you can use string if you wanna create one single row 
 
 
@@ -123,32 +140,46 @@ create_column("plasma", rows)
 # this is single row  
 create_column("plasma", "update")
 
-# you can make primary key this way 
-create_column("plasma", "id",primary_key=True)
+# you can make the primary key this way 
+# and it also shows some more features it consists 
+
+# create_column function has 3 more parameters  
+
+# not_null -> to avoid blank spaces and null values in column 
+# it takes bool values
+
+# unique -> it is used to rest the repetitive words in the column 
+# it takes bool value
+
+# forbiden_words -> it is used to restrict sets of words in the column
+# it takes a list as a parameter with some words to restrict 
+
+create_column("plasma",
+    "id",
+    primary_key=True,
+    not_null=False,
+    unique=False,
+    Forbiden_words=None
+)
 
 #you can always delete a column if you want
 
 
-# this fucntion takes table name (in my case its  "plasma") and columns you can pass list if you have many rows to delete
+# this function takes the table name (in my case its  "plasma") and columns you can pass list if you have many rows to delete
 # or you can pass a sting if you wanna delete a single row
 
-# in this case am deleting a single column but you can always pass a list to
+#, in this case, am deleting a single column but you can always pass a list to
 remove_column("plasma", "update")
-
-
 ```
 
-| functions         | description        | arguments |
-| ----------------- | -------------------|-----------|
-|create_column| This function helps you create columns in you table|table_name,columns name(accepts list or string)|
-|remove_column| Delete columns  |table_name,column(accepts list or string)|
-
+| functions     | description                                         | arguments                                       |
+| ------------- | --------------------------------------------------- | ----------------------------------------------- |
+| create_column | This function helps you create columns in you table | table_name,columns name(accepts list or string) |
+| remove_column | Delete columns                                      | table_name,column(accepts list or string)       |
 
 ### Lets learn about creating rows
 
-
 ```python
-
 from boxdb import*
 '''
 # At start lets create some rows!!!!
@@ -195,27 +226,22 @@ remove_column_number("plasma", 1)
 # it takes column number and what to update in  
 
 update_row("plasma","5e","update","22")
-
-
 ```
 
-| functions         | description        | arguments |
-| ----------------- | -------------------|-----------|
-| add_row | This function helps you create columns in you table|table_name,column_data(list)|
-| remove_column_number| Delete row by index |table_name,remove_row_number|
-| remove_row| Delete row |table_name,column,row_element|
-| update_row|update values in row |table_name,primary_value, column, element|
-
-
+| functions            | description                                         | arguments                                 |
+| -------------------- | --------------------------------------------------- | ----------------------------------------- |
+| add_row              | This function helps you create columns in you table | table_name,column_data(list)              |
+| remove_column_number | Delete row by index                                 | table_name,remove_row_number              |
+| remove_row           | row that can be recovered                           | table_name,column,row_element             |
+| delete_row           | remove row permently                                |                                           |
+| update_row           | update values in row                                | table_name,primary_value, column, element |
 
 ### Showing table
 
-
 ```python
-
 from boxdb import*
 
-# Displaying table is a kids job , its very easy 
+# Displaying table is a kids job, its very easy 
 
 # this function helps you to show table 
 # this function takes a single argument which is table name(in my case its "plasma")
@@ -230,22 +256,17 @@ now there is another method to do it with selective rows
 ''' 
 
 list_of_rows=["sr_no","number_of_cows"]
-get_table("plasma",[list_of_rows])
-
+get_table("plasma",list_of_rows)
 ```
 
-| functions         | description        | arguments |
-| ----------------- | -------------------|-----------|
-| get_table| This function helps to visualize the table|table_name|
-
+| functions | description                                | arguments  |
+| --------- | ------------------------------------------ | ---------- |
+| get_table | This function helps to visualize the table | table_name |
 
 ## License
 
 [MIT](https://github.com/kshitij1235/boxdb/blob/main/LICENSE)
 
-
-
 ## Feedback
-If you have any feedback, please reach out to us at email kshitijjathar7@gmail.com 
 
-  
+If you have any feedback, please reach out to us at email kshitijjathar7@gmail.com 
