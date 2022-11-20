@@ -1,4 +1,6 @@
+hola/
 plasma/
+dist/
 tempCodeRunnerFile.py
 boxdb/__pycache__/
 boxdb/tempCodeRunnerFile.py
@@ -6,4 +8,8 @@ test.py
 dist/
 wheel_creation.bat
 setup.py
-dist/
+.fleet/
+temp.py
+wokers/
+customers/
+hola/

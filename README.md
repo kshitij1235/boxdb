@@ -37,7 +37,7 @@ Install
 - remove_row() -> added it does not delete columns permenently
 - create_column() -> added feature to create a uniques column
 - create_column() -> added feature to create a column with forbident words
--  solved bugs in create_project
+- solved bugs in create_project
 - changes made to the core modules
 
 ----
@@ -45,7 +45,7 @@ Install
 ## Libraries Used
 
 - Tabulate
-- filemod
+- Coloroma
 
 ## Features
 
@@ -59,26 +59,29 @@ Install
 
 ---
 
-# Structure Of The Table
+# Structure Of The Database
 
 ```bash
-{table_name}
-│ 
-├── flags
-│   ├── forbidden.txt
-│   └── not_null.txt
-│   └── primary_key.txt
-│   └── unique.txt
-├── Forbidden
-│   ├── {forbiden_column}_f.txt
-├── Logs
-│   ├── error.log
-│   ├── info.log
-│   └── warning.log
-├── tables
-│   ├── {columns}.txt
-├── {table_name}_data.txt
-└── {table_name}_meta.txt
+{database_name}
+|
+|
+├─{table_name}
+  │ 
+  ├─ flags
+  │   ├── forbidden.txt
+  │   └── not_null.txt
+  │   └── primary_key.txt
+  │   └── unique.txt
+  ├── Forbidden
+  │   ├── {forbiden_column}_f.txt
+  ├── Logs
+  │   ├── error.log
+  │   ├── info.log
+  │   └── warning.log
+  ├── tables
+  │   ├── {columns}.txt
+  ├── {table_name}_data.txt
+  └── {table_name}_meta.txt
 ```
 
 ---
@@ -99,22 +102,27 @@ from boxdb import*
 # and rest you can put any number of keys values you want its upto you 
 
 #The only important key value is name 
+database_name="parent"
 info={
     'name':"plasma",      
     'description':"makeing heard of cows talking to each other and making things more brigth for the world to take stem"
 }
 
-# with the help of this function your table will be created 
-create_project(info)
+# with the help of this function your database will be created 
+create_database(database_name)
+
+# with the help of this function your table inside database will be created 
+create_table(database_name,info)
 
 #with the help of this function you can check the details of your table which  you stored
-details=get_detail("plasma")
+details=get_detail(database_name,"plasma")
 print(details)
 ```
 
 | functions      | description                                                   | arguments                                    |
 | -------------- | ------------------------------------------------------------- | -------------------------------------------- |
-| create_project | This function creates a  basic file system to store data info | info(patten given above for variable naming) |
+| create_database | This function creates a  basic file system to store table info | database(database_name) |
+| create_table | This function creates a  basic file system to store table info in database | database(database_name),info(patten given above for variable naming) |
 | get_detail     | This gives you all the basic details of the table             | table_name                                   |
 
 ## phase 2 (wow you learned to set up boxdb)
@@ -124,6 +132,7 @@ print(details)
 ```python
 from boxdb import*
 
+database_name="parent"
 # At the start let's create some rows!!!!
 
 # you can pass a string or even list to create columns according to your wish
@@ -135,10 +144,10 @@ columns=["sr no","names of cow","lites fo milk"]
 
 
 # this is multiple 
-create_column("plasma", rows)
+create_column(database_name"plasma", rows)
 
 # this is single row  
-create_column("plasma", "update")
+create_column(database_name,"plasma", "update")
 
 # you can make the primary key this way 
 # and it also shows some more features it consists 
@@ -154,7 +163,7 @@ create_column("plasma", "update")
 # forbiden_words -> it is used to restrict sets of words in the column
 # it takes a list as a parameter with some words to restrict 
 
-create_column("plasma",
+create_column(database_name,"plasma",
     "id",
     primary_key=True,
     not_null=False,
@@ -169,13 +178,13 @@ create_column("plasma",
 # or you can pass a sting if you wanna delete a single row
 
 #, in this case, am deleting a single column but you can always pass a list to
-remove_column("plasma", "update")
+remove_column(database_name"plasma", "update")
 ```
 
 | functions     | description                                         | arguments                                       |
 | ------------- | --------------------------------------------------- | ----------------------------------------------- |
-| create_column | This function helps you create columns in you table | table_name,columns name(accepts list or string) |
-| remove_column | Delete columns                                      | table_name,column(accepts list or string)       |
+| create_column | This function helps you create columns in you table | database_name, table_name,columns name(accepts list or string) |
+| remove_column | Delete columns                                      | database_name, table_name,column(accepts list or string)       |
 
 ### Lets learn about creating rows
 
@@ -198,11 +207,12 @@ rows=["1","amanda","28","er"]
 # this function takes table name (in my case its  "plasma") and rows you have to  pass list 
 # that you created earlier according to row size 
 '''
+database_name="parent"
 
 # this is multiple 
-add_row("plasma", rows)
-add_row("plasma",["2","ana","28","3e"])
-add_row("plasma",["3","kyee","28","5e"])
+add_row(database_name,"plasma", rows)
+add_row(database_name,"plasma",["2","ana","28","3e"])
+add_row(database_name,"plasma",["3","kyee","28","5e"])
 
 
 #you can always delete a row if you want
@@ -212,12 +222,12 @@ add_row("plasma",["3","kyee","28","5e"])
 # 1)it needs a primary key
 # it takes the column name to change and element to change
 
-remove_row("plasma","id","3e")
+remove_row(database_name,"plasma","id","3e")
 # this fucntion takes table name (in my case its  "plasma") 
 # and the number of row 
 
 # in this case am delelting a single columns which is row number 1
-remove_column_number("plasma", 1)
+remove_column_number(database_name,"plasma", 1)
 
 #you can always update a row if you want
 
@@ -225,16 +235,16 @@ remove_column_number("plasma", 1)
 # and a value from primary key that should exist in same row
 # it takes column number and what to update in  
 
-update_row("plasma","5e","update","22")
+update_row(database_name,"plasma","5e","update","22")
 ```
 
 | functions            | description                                         | arguments                                 |
 | -------------------- | --------------------------------------------------- | ----------------------------------------- |
-| add_row              | This function helps you create columns in you table | table_name,column_data(list)              |
-| remove_column_number | Delete row by index                                 | table_name,remove_row_number              |
-| remove_row           | row that can be recovered                           | table_name,column,row_element             |
+| add_row              | This function helps you create columns in you table | database_name, table_name,column_data(list)              |
+| remove_column_number | Delete row by index                                 | database_name, table_name,remove_row_number              |
+| remove_row           | row that can be recovered                           | database_name, table_name,column,row_element             |
 | delete_row           | remove row permently                                |                                           |
-| update_row           | update values in row                                | table_name,primary_value, column, element |
+| update_row           | update values in row                                | database_name, table_name,primary_value, column, element |
 
 ### Showing table
 
@@ -249,19 +259,19 @@ from boxdb import*
 ##i understand few freatures should be added to improve the use of show table functions
 # and yes it would be release soon 
 
-get_table("plasma")
+get_table(database_name,"plasma")
 
 '''
 now there is another method to do it with selective rows
 ''' 
 
 list_of_rows=["sr_no","number_of_cows"]
-get_table("plasma",list_of_rows)
+get_table(database_name,"plasma",list_of_rows)
 ```
 
 | functions | description                                | arguments  |
 | --------- | ------------------------------------------ | ---------- |
-| get_table | This function helps to visualize the table | table_name |
+| get_table | This function helps to visualize the table | database_name,table_name |
 
 ## License
 
