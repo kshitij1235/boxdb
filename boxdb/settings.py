@@ -5,17 +5,21 @@ This file contain code for
 1)all the paths for primary key , not null n unique
 
 '''
+TABLE=lambda database,table:f"./{database}/{table}"
+TABLE_METADATA=lambda database,table:f"./{database}/{table}/{table}_meta.txt"
 
-PRIMARY_KEY=lambda table:f'./{table}/flags/primary_key.txt'
-NOT_NULL=lambda table:f'./{table}/flags/not_null.txt'
-UNIQUE=lambda table:f'./{table}/flags/unique.txt'
-FORBIDDEN_COLUMNS=lambda table :f'./{table}/flags/forbidden.txt'
+PRIMARY_KEY=lambda database,table:f'./{database}/{table}/flags/primary_key.txt'
+NOT_NULL=lambda database,table:f'./{database}/{table}/flags/not_null.txt'
+UNIQUE=lambda database,table:f'./{database}/{table}/flags/unique.txt'
+FORBIDDEN_COLUMNS=lambda database,table :f'./{database}/{table}/flags/forbidden.txt'
 
-# ERRORLOGS='/logs/error.log'
-ERRORLOGS=lambda table:f'./{table}/logs/error.log'
-INFOLOGS=lambda table:f'./{table}/logs/info.log'
-WARNINGLOGS=lambda table:f'./{table}/logs/warning.log'
+ERRORLOGS=lambda database,table:  f'./{database}/{table}/logs/error.log'
+INFOLOGS=lambda database,table:   f'./{database}/{table}/logs/info.log'
+WARNINGLOGS=lambda database,table:f'./{database}/{table}/logs/warning.log'
 
-COLUMNS=lambda table,column:f"./{table}/tables/{column}.txt"
+COLUMNS=lambda database,table,column:f"./{database}/{table}/tables/{column}.txt"
+COLUMNS_DATA=lambda database,table:f"./{database}/{table}/{table}_data.txt"
 
-FORBIDDEN_WORDS=lambda table,column:f"./{table}/forbiden/{column}_f.txt"
+FORBIDDEN_WORDS=lambda database,table,column:f"./{database}/{table}/forbiden/{column}_f.txt"
+
+ENC_KEY=lambda database,table:f"{database}/{table}/{table}_key.key"

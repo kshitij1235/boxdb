@@ -8,42 +8,47 @@ made chaneges
 [ ] solved bugs in create_project
 '''
 
-from filemod import reader, writer
-from boxdb.checkups import check_table
-from os import mkdir, chdir
+from os import chdir, mkdir,listdir
+from boxdb.box_encoder import generate_filekey
+from boxdb.core import writer
+from boxdb.checkups import check_database, check_table
+from boxdb.logs import logerror 
+from boxdb.tempo_core import add_data,extract_data
+from boxdb.settings import TABLE_METADATA,TABLE,COLUMNS_DATA
 
-def get_detail(table_name):
+
+def get_detail(database,table_name):
     """
     saves meta data of the users
     """
-    return reader(f"./{table_name}/{table_name}_meta.txt")
+    return extract_data(TABLE_METADATA(database,table_name))
 
+def list_tables(database):
+    d=f'./{database}'
+    return listdir(d)
 
-def create_project(info):
+def create_database(database_name):
+    if(check_database(database_name)):
+        logerror(database_name,table=None,message="CREATE : Database or file already exists")
+        return False
+    mkdir(database_name)
+
+def create_table(database,info):
     """created necessary files in the dir"""
-
-    #FIXME add a extra file structure
-    #flags/not_null.txt and primary_key.txt
 
     name=info['name']
 
-    if check_table(name):
-        print("project already exists")
+    if check_table(database,name,push_error=False):
+        logerror(database,None,"CREATE: Project Already Exists")
         return False
         
     try:
-        mkdir(name)
-    except Exception:
+        mkdir(TABLE(database,name))
+    except Exception as e:
+        logerror(database,None,f"CREATE : Cannot create a base directory at {TABLE(database,name)}")
         return False
     
-
-    writing=''
-    keys_ = list(info.keys())
-    values_ = list(info.values())
-    for key, value in zip(keys_, values_):
-        writing = f"{writing} {key}:{value}\n"
-
-    files = [f"./{name}/{name}_meta.txt", f"./{name}/{name}_data.txt"]
+    files = [TABLE_METADATA(database,name), COLUMNS_DATA(database,name)]
     
     dir_=['tables','flags','logs','forbiden']
     
@@ -55,12 +60,17 @@ def create_project(info):
 
 
     for file_ in files:
-        if file_ == f"./{name}/{name}_meta.txt":
-            writer(file_, writing, "w")
+        generate_filekey(location=f"./{database}/{name}/{name}_key.key")
+        if file_ == TABLE_METADATA(database,name):
+            writer(file_, " ", "w")
+            keys_ = list(info.keys())
+            values_ = list(info.values())
+            for key, value in zip(keys_, values_):
+                add_data(TABLE_METADATA(database,name),key,value)
         else:
-            writer(file_,'', "w")
+            writer(file_,'{ \n }', "w")
 
-    chdir(f"./{name}")
+    chdir(f"./{database}/{name}")
 
     for folder in dir_:
         mkdir(folder)
@@ -69,6 +79,6 @@ def create_project(info):
         writer(flags,"","w")
 
     chdir("../")
-
-
     return True
+
+

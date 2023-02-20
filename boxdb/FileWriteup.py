@@ -1,6 +1,11 @@
 from os import remove
-
-from filemod import(
+from boxdb.checkups import column_exists
+from boxdb.tempo_core import(
+    add_data,
+    edit_data,
+    remove_value
+)
+from boxdb.core import(
     delete_specific_line,
     word_search_line,
     writer,
@@ -9,6 +14,7 @@ from filemod import(
 )
 
 from boxdb.settings import(
+    COLUMNS_DATA,
     FORBIDDEN_COLUMNS,
     FORBIDDEN_WORDS,
     PRIMARY_KEY,
@@ -23,69 +29,81 @@ from boxdb.logs import(
 )
 from boxdb.support import get_forbidden_words
 
-def remove_column_and_file(table_name, element):
+#FIXME might need changes
+def remove_column_and_file(database,table_name, element):
     """
     Remove column from data file
     Remove column file
     """
-    path = f"{table_name}/{table_name}_data.txt"
-    delete_specific_line(path, word_search_line(path, element))
-    remove(COLUMNS(table_name,element))
+    path = COLUMNS_DATA(database,table_name)
+
+    remove_value(path,element)
     return True
 
-def remove_column_without_file(table_name, element):
+#FIXME - might need changes after
+def remove_column_without_file(database,table_name, element):
     """
     Remove column from data file
     """
-    path = f"{table_name}/{table_name}_data.txt"
-    delete_specific_line(path, word_search_line(path, element))
+    path = COLUMNS_DATA(database,table_name)
+    remove_value(path,element)
+
+    # delete_specific_line(path, word_search_line(path, element))
     return True
 
 
-def register_column(table_name, column_name):
+#FIXME - might need changes after
+def register_column(database,table_name, column_name,data_type):
     """
     Add column name to file
     """
-    writer(f"./{table_name}/{table_name}_data.txt", f"{column_name}\n", "a")
+    add_data(COLUMNS_DATA(database,table_name),column_name,data_type)
+    # writer(COLUMNS_DATA(database,table_name), f"{column_name}\n", "a")
 
 
-def write_element_in_primary(table_name, element):
+def write_element_in_primary(database,table_name, element):
     """
     Push element to the primary flag
     """
-    writer(PRIMARY_KEY(table_name), f"{element}", "w")
+    writer(PRIMARY_KEY(database,table_name), f"{element}", "w")
 
-def write_element_in_unique(table_name, element):
+def write_element_in_unique(database,table_name, element):
     """
     Push element to the unique flag
     """
-    writer(UNIQUE(table_name), f"{element}", "w")
+    writer(UNIQUE(database,table_name), f"{element}", "w")
 
-def write_element_in_forbidden(table_name, element):
+def write_element_in_forbidden(database,table_name, element):
     """
     Push element to the unique flag
     """
-    writer(FORBIDDEN_COLUMNS(table_name), f"{element}", "w")
+    writer(FORBIDDEN_COLUMNS(database,table_name), f"{element}", "w")
 
-def create_forbiddent_file(table_name,column):
-    writer(FORBIDDEN_WORDS(table_name,column),"","w")
+def create_forbiddent_file(database,table_name,column):
+    writer(FORBIDDEN_WORDS(database,table_name,column),"","w")
 
-def append_element_in_not_null(table_name, element):
+def append_element_in_not_null(database,table_name, element):
     """
     Push element to the not null flag
     """
-    writer(NOT_NULL(table_name), f"{element}\n", "a")
+    writer(NOT_NULL(database,table_name), f"{element}\n", "a")
 
 
-def add_blank_lines_in_columns(table_name, column, times):
+def add_blank_lines_in_columns(database,table_name, column, times):
     """
     fill up the column with dummy lines
     """
-    return writer(f"./{table_name}/tables/{column}.txt",
+
+    # this helps to retrive file when deleted from column list but 
+    # not actual column file is deleted
+    if column_exists(database,table_name,column):
+        return True
+    return writer(COLUMNS(database,table_name,column),
                   " \n"*times, "w")
 
 
-def replace_column_element_with_pk_refrence(table_name,
+def replace_column_element_with_pk_refrence(database,
+                                            table_name,
                                             primary_columns,
                                             primary__refrence_element,
                                             column_name,
@@ -110,28 +128,28 @@ def replace_column_element_with_pk_refrence(table_name,
 
     # get the line number from the changing column
     line = word_search_line(
-        COLUMNS(table_name,primary_columns), primary__refrence_element)
+        COLUMNS(database,table_name,primary_columns), primary__refrence_element)
 
     if target_element is None:
         # get the name of element to change
         target_element = read_specific_line(
-            COLUMNS(table_name,column_name), line-1).strip()
+            COLUMNS(database,table_name,column_name), line-1).strip()
 
     # exit point check if the replacement or changing element is same
     if target_element == replacement:
-        logerror(table_name,f"TABLE : Column {column_name} is already {target_element}")
+        logerror(database,table_name,f"TABLE : Column {column_name} is already {target_element}")
         return False
 
     # change the element
     write_specific_line(
-        f'.\\{table_name}\\tables\\{column_name}.txt', line, replacement)
+        COLUMNS(database,table_name,column_name), line, replacement)
     loginfo(table_name,
         f"TABLE : changes made in {column_name},from {target_element} -> {replacement}")
     return True
 
 
 
-def write_rows_and_columns_in_file(table_name,
+def write_rows_and_columns_in_file(database,table_name,
                                 columns,
                                 rows,
                                 forbidden_keys):
@@ -141,20 +159,20 @@ def write_rows_and_columns_in_file(table_name,
     if forbidden_keys is not None:
         for column , row in zip(columns,rows):
             if column in forbidden_keys:
-                resticted_words=get_forbidden_words(table_name,column)
+                resticted_words=get_forbidden_words(database,table_name,column)
                 if row in resticted_words:
-                    logerror(table_name,f"FORBIDDEN : word found {row}")
+                    logerror(database,table_name,f"FORBIDDEN : word found {row}")
                     return False
 
     
     for column, row in zip(columns, rows):
         # adding rows into columns
-        writer(COLUMNS(table_name,column), f"{row} \n", "a")
-    loginfo(table_name, f"ROW : sucessfully added to '{table_name}'")
+        writer(COLUMNS(database,table_name,column), f"{row} \n", "a")
+    loginfo(database,table_name, f"ROW : sucessfully added to '{table_name}'")
     return True
 
 
-def delete_a_specific_row(table_name,
+def delete_a_specific_row(database,table_name,
         rows,
         row_to_remove,
         row_element
@@ -167,22 +185,25 @@ def delete_a_specific_row(table_name,
     for elements in rows:
         try:
             delete_specific_line(
-                COLUMNS(table_name,elements), row_to_remove)
+                COLUMNS(database,table_name,elements), row_to_remove)
         except Exception:
-            logerror(table_name, f"ROWS : '{row_element}' not found ")
+            logerror(database,table_name, f"ROWS : '{row_element}' not found ")
             return False
-    loginfo(table_name, f"ROWS : '{row_element}' deleted sucessfully")
+    loginfo(database,table_name, f"ROWS : '{row_element}' deleted sucessfully")
     return True
 
-def remove_element_with_linenumber(table_name,column,line):
+def remove_element_with_linenumber(database,table_name,column,line):
     """
     removes a specific row element from a specfic
     column by specifing the line number
     """
-    return delete_specific_line(COLUMNS(table_name,column), line)
+    return delete_specific_line(COLUMNS(database,table_name,column), line)
 
-def push_list_elements_in_line(table_name,filename,list_elements,column):
+def push_list_elements_in_line(database,table_name,filename,list_elements,column):
+    """
+    place elements line by line in a file
+    """
     for elements in list_elements:
         writer(filename,f"{elements}\n","a")
-    write_element_in_forbidden(table_name,column)
+    write_element_in_forbidden(database,table_name,column)
     return True

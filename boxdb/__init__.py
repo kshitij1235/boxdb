@@ -29,10 +29,3 @@ from boxdb.auth import *
 from boxdb.columns import *
 from boxdb.logs import showlogs
 
-
-"""
-ideas -
-
-[ ] forbidden words in a column - done
-[ ] encryption  
-"""
