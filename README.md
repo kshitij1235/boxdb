@@ -24,21 +24,12 @@ Install
 
 # UPDATE
 
-- FORBIDDEN WORDS ARE ADDED TO THE COLUMN !! , so now you can restrict some words for a column.
-- IT ALSO KEEPS TRACK OF TABLE WITH LOGS
-- auth_details() improved speed and algorithm
-- specific_auth() improved speed and algorithm
-- add_row() made more faster
-- drop_primary_key()->added
-- assign_primary_key()->added
-- get_table()->loads the table lazily now and memory efficient and faster
 - internal check primary row fixed
-- delete_row() -> added it deleted columns permenently
-- remove_row() -> added it does not delete columns permenently
-- create_column() -> added feature to create a uniques column
-- create_column() -> added feature to create a column with forbident words
+- rename_column() -> function added
 - solved bugs in create_project
-- changes made to the core modules
+- row_table() -> Made improvements
+- extract_keys()-> fixed bugs
+- Data_cond file added , helps you filture data of table
 
 ----
 
@@ -119,11 +110,11 @@ details=get_detail(database_name,"plasma")
 print(details)
 ```
 
-| functions      | description                                                   | arguments                                    |
-| -------------- | ------------------------------------------------------------- | -------------------------------------------- |
-| create_database | This function creates a  basic file system to store table info | database(database_name) |
-| create_table | This function creates a  basic file system to store table info in database | database(database_name),info(patten given above for variable naming) |
-| get_detail     | This gives you all the basic details of the table             | table_name                                   |
+| functions       | description                                                                | arguments                                                            |
+| --------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| create_database | This function creates a  basic file system to store table info             | database(database_name)                                              |
+| create_table    | This function creates a  basic file system to store table info in database | database(database_name),info(patten given above for variable naming) |
+| get_detail      | This gives you all the basic details of the table                          | table_name                                                           |
 
 ## phase 2 (wow you learned to set up boxdb)
 
@@ -181,8 +172,8 @@ create_column(database_name,"plasma",
 remove_column(database_name"plasma", "update")
 ```
 
-| functions     | description                                         | arguments                                       |
-| ------------- | --------------------------------------------------- | ----------------------------------------------- |
+| functions     | description                                         | arguments                                                      |
+| ------------- | --------------------------------------------------- | -------------------------------------------------------------- |
 | create_column | This function helps you create columns in you table | database_name, table_name,columns name(accepts list or string) |
 | remove_column | Delete columns                                      | database_name, table_name,column(accepts list or string)       |
 
@@ -238,12 +229,12 @@ remove_column_number(database_name,"plasma", 1)
 update_row(database_name,"plasma","5e","update","22")
 ```
 
-| functions            | description                                         | arguments                                 |
-| -------------------- | --------------------------------------------------- | ----------------------------------------- |
+| functions            | description                                         | arguments                                                |
+| -------------------- | --------------------------------------------------- | -------------------------------------------------------- |
 | add_row              | This function helps you create columns in you table | database_name, table_name,column_data(list)              |
 | remove_column_number | Delete row by index                                 | database_name, table_name,remove_row_number              |
 | remove_row           | row that can be recovered                           | database_name, table_name,column,row_element             |
-| delete_row           | remove row permently                                |                                           |
+| delete_row           | remove row permently                                |                                                          |
 | update_row           | update values in row                                | database_name, table_name,primary_value, column, element |
 
 ### Showing table
@@ -269,9 +260,50 @@ list_of_rows=["sr_no","number_of_cows"]
 get_table(database_name,"plasma",list_of_rows)
 ```
 
-| functions | description                                | arguments  |
-| --------- | ------------------------------------------ | ---------- |
+| functions | description                                | arguments                |
+| --------- | ------------------------------------------ | ------------------------ |
 | get_table | This function helps to visualize the table | database_name,table_name |
+
+### Creating view
+
+```python
+from boxdb import*
+
+''''
+As a basic feature boxdb gives you option to create a view of the table 
+selecting particular columns from table in database
+''''
+create_view(database_name="workers",
+view_name="compare",
+column_data={"main":"inj","worker_id":"onsite"}
+)
+
+''''
+In the given example 
+database_name = specifi the database name of which view should be created/
+
+view_name = specifi the view name what it should be called 
+
+column_data = it is necessary to specifi the table name and the specific
+column that should be included in the dictonary 
+
+format : 
+
+{column_name : table_name , .... ,column_name : table_name}
+
+''''
+
+# it is used to print the view of the specific database 
+print(get_view(database_name,"compare"))
+
+
+
+```
+
+| functions | description                                | arguments                |
+| --------- | ------------------------------------------ | ------------------------ |
+| create_view  | create a view of the database | database_name,view_name, column_data |
+| get_view| print the data in view | database_name,view_name |
 
 ## License
 

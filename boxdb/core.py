@@ -128,3 +128,7 @@ def get_limited_lines(filename,line_limit):
         for _ in range(line_limit):
             line.append(f.readline())
     return line
+
+def hide_file(filename):
+    import subprocess
+    subprocess.check_call(["attrib","+H",filename])

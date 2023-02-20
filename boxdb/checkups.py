@@ -85,7 +85,7 @@ def table_struture_exists(database,table_name):
     """
     content=get_columns(database,table_name)
     if not content:
-        logWarning(table_name, f"TABLE : {table_name} has no structure yet")
+        logWarning(database,table_name, f"TABLE : {table_name} has no structure yet")
         return False
     return True
 
@@ -103,4 +103,17 @@ def check_datatypes(database,table_name,data):
         if column_datatype == "bool" and not isinstance(element, bool):
             logerror(database,table_name,f"CHECKUP: DataType int required for {element}")
             return False
+    return True
+
+def checkup_table_struct(database,table_name):
+    """
+    perform a combo of checks
+    """
+    if not check_table(database,table_name):
+        return False
+
+    # check if table is empty or not
+    if not empty_table(database,table_name):
+        return False
+        
     return True

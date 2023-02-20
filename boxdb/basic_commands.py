@@ -5,16 +5,19 @@ This file contain code for
 1)row,column creation and deletion
 2)and gettting table
 
-get_table() -> fixed bugs
+get_table() -> Added word buffer
 '''
 
 import asyncio
 from boxdb.core import writer
 from tabulate import tabulate
 from boxdb.settings import PRIMARY_KEY
-from boxdb.readtable import row_table
+from boxdb.readtable import row_table,row__multiple_table
 from boxdb.support import (get_primary_column,
-get_columns,AddFlagsToColumns )
+get_columns,
+AddFlagsToColumns,
+get_view_column,
+get_view_table )
 
 from boxdb.checkups import (column_exists,
 primary_key_exists,
@@ -29,25 +32,78 @@ from boxdb.logs import logWarning, loginfo, logerror
 
 def get_table(database,
 table_name,
+data=None,
 columns=None,
+Display=True,
 index='always',
 style="texttile",
-row_limiit=None
+row_limiit=None,
+word_buffer=None
 ):
     """
     It is used to display table in terminal or even filture
     out some rows according to the convience
     """
+    
+    if data is not None :
+        columns= get_columns(database,table_name)
+        return tabulate(data, headers=columns, showindex=index, tablefmt=style)
+
     if columns is None:
         columns= get_columns(database,table_name)
-    lazy_data=asyncio.run(row_table(database,table_name,columns,limit_row=row_limiit))
+    lazy_data=asyncio.run(row_table(database,table_name,columns,limit_row=row_limiit,word_buffer=word_buffer))
+
+    #LAZY_DATA is false when no data in table
+    if lazy_data is False:
+        return False
+    
+    if not Display: 
+        return lazy_data
+
+    processed = AddFlagsToColumns(database,table_name, columns)
+    
+    return tabulate(lazy_data, headers=processed, showindex=index, tablefmt=style)
+
+def display_data(data,
+database=None,
+table_name=None,
+columns=None,
+index='always',
+style="texttile",
+):
+    """
+    It is used to print data 
+    """
+    columns=[]
+    if data is not None:
+        if database and table_name is not None:
+            columns= get_columns(database,table_name)
+        else:
+            columns = [f"columns_{i}" for i in range(len(data[0]))]
+        return tabulate(data, headers=columns, showindex=index, tablefmt=style)
+
+def get_view(database,
+view_name,
+index='always',
+style="texttile",
+row_limiit=None,
+word_buffer=None
+):
+    """
+    It is used to get table 
+    """
+    
+    columns= get_view_column(database,view_name)
+    table_names=get_view_table(database,view_name)
+    lazy_data=asyncio.run(row__multiple_table(database,table_names,columns,limit_row=row_limiit,word_buffer=word_buffer))
 
     #LAZY_DATA is false when no data in table
     if lazy_data is False:
         return False
 
-    processed = AddFlagsToColumns(database,table_name, columns)
-    return tabulate(lazy_data, headers=processed, showindex=index, tablefmt=style)
+    # processed = AddFlagsToColumns(database,view_name, columns)
+    return tabulate(lazy_data, headers=columns, showindex=index, tablefmt=style)
+
 
 
 def drop_primary_key(database,table_name):

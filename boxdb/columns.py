@@ -4,8 +4,8 @@ boxdb/auth_boxbd -> v0.9
 This file contain code for all
 the row methods
 
-[ ]create_column() -> Fixed bugs
-[ ]delete_column() -> Fixed bugs
+[ ] rename_column() -> function added
+
 '''
 
 # all the import necessary for basic function on files
@@ -21,8 +21,7 @@ from boxdb.support import(
     reformat_file   
 )
 
-
-from boxdb.settings import FORBIDDEN_WORDS
+from boxdb.settings import FORBIDDEN_WORDS,COLUMNS_DATA,COLUMNS,DATABASE_TABLE
 
 from boxdb.FileWriteup import(
     write_element_in_primary,
@@ -46,6 +45,9 @@ from boxdb.logs import(
     loginfo
 )
 
+from boxdb.tempo_core import edit_keys,edit_data
+
+from os import rename
 
 def create_column(database,
                   table_name,
@@ -62,6 +64,7 @@ def create_column(database,
 
     if data_type not in supported_data_types:
         logerror(database,table_name,"COLUMN: Unsupported datatype")
+        return False
     
     if not check_table(database,table_name):
         return False
@@ -110,16 +113,14 @@ def create_column(database,
             logWarning(database,table_name,f"COLUMN : {elements} could not be created")
             
         if Forbiden_words is not None:
-            push_list_elements_in_line(table_name=table_name,
+            push_list_elements_in_line(database,table_name=table_name,
             filename=FORBIDDEN_WORDS(database,table_name,elements),
             list_elements=Forbiden_words,
             column=elements)
 
-
     # remove black spaces from the file
     reformat_file(database,table_name)
-
-
+    edit_data(DATABASE_TABLE(database),table_name,str(len(content)+1))
     loginfo(database,table_name,f"COLUMN : Created {len(columns)} Column sucessfully")
     return True
 
@@ -128,7 +129,7 @@ def delete_column(database,table_name, column):
     """
     removes files under table so that data can be released
     """
-# FIXME optimization needed
+    # FIXME optimization needed
 
     if not check_table(database,table_name):
         return False
@@ -144,10 +145,11 @@ def delete_column(database,table_name, column):
         # if column that need to be deleted actually exists in the main columns
         if element in content:
             remove_column_and_file(database,table_name, element)
-            loginfo(table_name,f"COLUMN : '{element}' Deleted sucessfully")
+            loginfo(database,table_name,f"COLUMN : '{element}' Deleted sucessfully")
         else:
             logerror(database,table_name,f"ERROR : '{element}' not present in table")
             return False
+    edit_data(DATABASE_TABLE(database),table_name,str(len(content)-1))
     return True
 
 
@@ -171,7 +173,20 @@ def remove_column(database,table_name,column):
         if content.count(elements) == 1:
             remove_column_without_file(database,table_name, elements)
             loginfo(database,table_name,f"COLUMN : '{elements}' Removed sucessfully")
+            edit_data(DATABASE_TABLE(database),table_name,str(len(content)-1))  
             return True
 
         logerror(database,table_name,f"ERROR : '{elements}' not present in table")
+        
         return False
+
+def rename_column(database,table_name,column_name,new_column_name):
+    '''
+    Rename column of the table
+    '''
+    if column_name not in get_columns(database,table_name):
+        logerror(database,table_name,f"COLUMN : column {column_name} does not exits in table {table_name} under {database}")
+    edit_keys(COLUMNS_DATA(database,table_name),column_name,new_column_name) 
+    rename(COLUMNS(database,table_name,column_name),COLUMNS(database,table_name,new_column_name))
+   
+    return True

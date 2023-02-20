@@ -10,11 +10,14 @@ AddFlagsToColumns()->fixed major bug
 
 from boxdb.core import(read_specific_line,
 get_limited_lines,
-number_of_lines)
+number_of_lines,
+writer
+)
 
 from boxdb.tempo_core import(
     extract_keys,
-    extract_values
+    extract_values,
+    extract_data
 )
 
 from boxdb.logs import logerror
@@ -25,9 +28,10 @@ PRIMARY_KEY,
 NOT_NULL,
 UNIQUE,
 COLUMNS,
-COLUMNS_DATA)
+COLUMNS_DATA,
+VIEW)
 
-def get_content(context, target,limit=None):
+def get_content(context, target,limit=None,word_buffer=None):
     """
     It gets the content from any file with
     data in it(auto generated) and returns in list
@@ -35,16 +39,24 @@ def get_content(context, target,limit=None):
     #FIXME optimization need takes 0.009 secs
 
     lines = []
+    temp=[]
+    counter=0
     try:        
         if limit !=None:
             return get_limited_lines(target,limit)
 
         with open(target,encoding='UTF-8') as file:
             lines = file.readlines() 
+        
+        if word_buffer is not None:
+            for elemnets in lines :
+                temp.append(f"{elemnets[0:word_buffer]}{''if len(elemnets)<=word_buffer else '...'}")
+                lines=temp
+        del temp
         return list(map(str.strip, lines))
 
     except FileNotFoundError:
-        print(f"{context} file missing")
+        print(f"{context} {target} file missing")
         return False
 
 #FIXME might need changes after
@@ -54,6 +66,24 @@ def get_columns(database,table_name):
     data in it(auto generated) and returns in list
     """
     return extract_keys(COLUMNS_DATA(database,table_name))
+
+def get_view(database,view_name):
+    """
+    It gets content in view
+    """
+    return extract_data(VIEW(database,view_name))
+
+def get_view_table(database,view_name):
+    """
+    It gets content in view
+    """
+    return extract_values(VIEW(database,view_name))
+
+def get_view_column(database,view_name):
+    """
+    It gets content in view
+    """
+    return extract_keys(VIEW(database,view_name))
 
 def get_columns_datatype(database,table_name):
     """
@@ -107,6 +137,7 @@ def get_elements(database,table_name,column):
     """
     with open(COLUMNS(database,table_name,column),'r+',encoding="UTF-8") as files:
         line=files.readlines()
+        
     return [row_elements.strip() for row_elements in line]
 
 def reformat_file(database,table_name):
@@ -124,10 +155,19 @@ def max_row_size(database,table_name,columns):
     """
     get the maximum row size of table
     """
+    if not isinstance(table_name, list):
+        table_name= [table_name]
     rows_amount=[]
-    for column in columns:
-        rows_amount.append(number_of_lines(COLUMNS(database,table_name,column)))
+
+    if isinstance(table_name,str):
+        for column in columns:
+            rows_amount.append(number_of_lines(COLUMNS(database,table_name,column)))
+        return max(rows_amount)-1 if rows_amount else 0
+
+    for table,column in zip(table_name,columns):
+        rows_amount.append(number_of_lines(COLUMNS(database,table,column)))
     return max(rows_amount)-1 if rows_amount else 0
+
 
 
 def remove_dublicate_columns(database,table_name,colums):
@@ -221,3 +261,19 @@ def convert_list_elements_to_string(input_list):
     for element in input_list:
         converted_list.append(str(element))
     return converted_list
+
+def write_dict(filename,keys,values):
+    writing_file="{ \n"
+    for key, value in zip(keys,values):
+        writing_file = f"{writing_file}{key}:{value}\n"
+    writing_file = writing_file+"\n"+"}"
+    writer(filename,writing_file,"w")
+    return True
+
+def type_cast_list(List,type_):
+    """
+    Type cast a list with certain data type
+    """
+    data=list(map(type_,List))
+    return data
+

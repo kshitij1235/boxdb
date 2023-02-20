@@ -29,7 +29,6 @@ from boxdb.logs import(
 )
 from boxdb.support import get_forbidden_words
 
-#FIXME might need changes
 def remove_column_and_file(database,table_name, element):
     """
     Remove column from data file
@@ -40,7 +39,6 @@ def remove_column_and_file(database,table_name, element):
     remove_value(path,element)
     return True
 
-#FIXME - might need changes after
 def remove_column_without_file(database,table_name, element):
     """
     Remove column from data file
@@ -48,17 +46,14 @@ def remove_column_without_file(database,table_name, element):
     path = COLUMNS_DATA(database,table_name)
     remove_value(path,element)
 
-    # delete_specific_line(path, word_search_line(path, element))
     return True
 
 
-#FIXME - might need changes after
 def register_column(database,table_name, column_name,data_type):
     """
     Add column name to file
     """
     add_data(COLUMNS_DATA(database,table_name),column_name,data_type)
-    # writer(COLUMNS_DATA(database,table_name), f"{column_name}\n", "a")
 
 
 def write_element_in_primary(database,table_name, element):
@@ -156,6 +151,7 @@ def write_rows_and_columns_in_file(database,table_name,
     """
     fills out colums according to the row inputs 
     """
+
     if forbidden_keys is not None:
         for column , row in zip(columns,rows):
             if column in forbidden_keys:

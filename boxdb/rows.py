@@ -20,10 +20,8 @@ from boxdb.FileWriteup import(
 
 from boxdb.checkups import(
     row_element_exist,
-    primary_key_exists,
-    empty_table,
-    check_table,
-    check_datatypes
+    check_datatypes,
+    checkup_table_struct
 )
 
 from boxdb.logs import(
@@ -37,19 +35,15 @@ def add_row(database,table_name, data_in_array):
     # TODO addrow() function is way too complicated
     # TODO notnull is broken
 
-
-
-    if not check_table(database,table_name):
-        return False
+    if not checkup_table_struct(database,table_name):
+        return True
 
     content = get_columns(database,table_name)
 
     if not check_datatypes(database,table_name,data_in_array):
         return False
 
-
     data_in_array=convert_list_elements_to_string(data_in_array)
-
 
     # get all the primary column to detect dublication
     primary_key = get_primary_column(database,table_name)
@@ -61,7 +55,7 @@ def add_row(database,table_name, data_in_array):
     if len(content) != len(data_in_array):
         logerror(database,table_name,"ROW: Imblance number of rows")
         return False
-
+    
     for column, rows in zip(content, data_in_array):
 
         # this checks for the double entry in table of primary column
@@ -90,8 +84,8 @@ def remove_row_number(database,table_name, row_number):
     """
     removing colums with refrence of the number
     """
-    if not check_table(database,table_name):
-        return False
+    if not checkup_table_struct(database,table_name):
+        return True
 
     content = get_columns(database,table_name)
     for column in content:
@@ -114,12 +108,8 @@ def remove_row(database,table_name, row_element):
     for the refrece of row to remove
     """
 
-    if not check_table(database,table_name):
-        return False
-
-    # check if table is empty or not
-    if not empty_table(database,table_name):
-        return False
+    if not checkup_table_struct(database,table_name):
+        return True
 
     primary_key=get_primary_column(database,table_name)
 
@@ -130,7 +120,7 @@ def remove_row(database,table_name, row_element):
 
     rows = get_columns(database,table_name)
 
-    # serarching for a the line to remove
+    # Searching for a the line to remove
     row_to_remove = word_search_line(
         COLUMNS(database,table_name,primary_key), row_element)
     
@@ -141,16 +131,14 @@ def remove_row(database,table_name, row_element):
     # deleting row from all the files
     return delete_a_specific_row(database,table_name,rows,row_to_remove,row_element)
 
-
-
-def update_row(table_name,
+def update_row(database,table_name,
                primary_value,
                column,
                replace,
                element_to_change=None):
     """
     This changes the values from the table
-    primary_vale -> its a refrence value to get the row number
+    primary_value -> its a refrence value to get the row number
     column -> its to get which row to change
     replace -> it is what row element will be updated in
 
@@ -165,18 +153,18 @@ def update_row(table_name,
 
     # performing checks 
 
-    if not check_table(table_name):
-        return False
+    if not checkup_table_struct(database,table_name):
+        return True
 
-    primary_column = get_primary_column(table_name)
+    primary_column = get_primary_column(database,table_name)
 
     # check primary key
     if primary_column is None:
-        logerror(table_name,"PRIMARY KEY : not found")
+        logerror(database,table_name,"PRIMARY KEY : not found")
         return False
 
    # search for primary key with element
-    return replace_column_element_with_pk_refrence(table_name,
+    return replace_column_element_with_pk_refrence(database,table_name,
         primary_column,
         primary_value,
         column, replace,

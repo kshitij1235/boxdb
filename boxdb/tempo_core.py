@@ -54,11 +54,11 @@ def extract_values(filename):
     values = allot_values(values)
     return values
 
-def extract_data(data):
+def extract_data(filename):
     """create a dictonary"""
 
-    keys = extract_keys(data)
-    values = extract_values(data)
+    keys = extract_keys(filename)
+    values = extract_values(filename)
     res = []
     [res.append(x) for x in keys if x not in res]
     keys=res
@@ -68,10 +68,83 @@ def edit_data(filename, key, value):
     """
     edit value  from the file
     """
+    from boxdb.support import write_dict
     
     data = list(reader(filename))
     keys = extract_keys(data)
     values = extract_values(data)
+
+    # gettting value of element to change
+
+    temp = keys.index(key)
+
+    # swaping the old value witgh new one 
+
+    values.pop(temp)
+    values.insert(temp, value)
+
+    write_dict(filename,keys,values)
+
+
+def add_data(filename, newkeys, newvalues):
+    """append data into txt file"""
+    # get the file data
+    keys=[]
+    values=[]
+    # extract keys and values
+    try: 
+        keys = extract_keys(filename)
+        values = extract_values(filename)
+    except:
+        pass
+    # append new keys and values to old list
+    keys.append(newkeys)
+    values.append(newvalues)
+
+    # filling up template
+    write_file = "{ \n"
+
+    for size in range(len(keys)):
+        write_file = f"{write_file} {keys[size]} : {values[size]}\n"
+
+    write_file = write_file+"\n"+"}"
+
+    # write in file
+    writer(filename, write_file, "w")
+
+    return True
+
+def remove_value(filename,key):
+    from boxdb.support import write_dict
+
+    keys=extract_keys(filename)
+    values=extract_values(filename)
+
+    index=keys.index(key)
+
+    keys.remove(key)
+    values.pop(index)
+    write_dict(filename,keys,values)
+
+def edit_keys(filename,key_name,new_key):
+    from boxdb.support import write_dict
+    data=extract_data(filename)
+    data_keys=list(data.keys())
+    data_values=list(data.values())
+
+    key_loc=data_keys.index(key_name)
+    data_keys.insert(key_loc+1,new_key)
+    data_keys.pop(key_loc)
+
+    return write_dict(filename,data_keys,data_values)
+
+def edit_data(filename, key, value):
+    """
+    edit value  from the file
+    """
+    
+    keys = extract_keys(filename)
+    values = extract_values(filename)
 
     # gettting value of element to change
 
@@ -92,45 +165,3 @@ def edit_data(filename, key, value):
     # writing the date processed 
     writer(filename, writing_file, "w")
     return True
-
-
-def add_data(filename, newkeys, newvalues):
-    """append data into txt file"""
-    # get the file data
-
-    # extract keys and values
-    keys = extract_keys(filename)
-    values = extract_values(filename)
-
-    # append new keys and values to old list
-    keys.append(newkeys)
-    values.append(newvalues)
-
-    # filling up template
-
-    write_file = "{ \n"
-
-    for size in range(len(keys)):
-        write_file = f"{write_file} {keys[size]} : {values[size]}\n"
-
-    write_file = write_file+"\n"+"}"
-
-    # write in file
-    writer(filename, write_file, "w")
-
-    return True
-
-def remove_value(filename,key):
-
-    keys=extract_keys(filename)
-    values=extract_values(filename)
-
-    index=keys.index(key)
-
-    keys.remove(key)
-    values.pop(index)
-    writing_file="{ \n"
-    for keys , values in zip(keys,values):
-        writing_file = f"{writing_file}{keys}:{values}\n"
-    writing_file = writing_file+"\n"+"}"
-    writer(filename,writing_file,"w")
